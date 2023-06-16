@@ -139,7 +139,7 @@ def get_x_vector(
         if (
             not hasattr(model.tokenizer, "pad_token_id")
             or model.tokenizer.pad_token_id is None
-        ):
+        ) and custom_pad_id is None:
             raise ValueError(
                 "Tokenizer does not have a pad_token_id. "
                 "Please specify a custom pad token."
@@ -152,15 +152,19 @@ def get_x_vector(
         ]
         max_token_len: int = max(tokens1.shape[-1], tokens2.shape[-1])
 
-        # Pad the shorter token sequence
-        pad_partial: Callable = lambda tokens: torch.nn.functional.pad(
-            tokens,
-            (0, max_token_len - tokens.shape[-1]),
+        # Pad the tokens to the same length using torch.nn.functional.pad
+        padded_tokens1 = torch.nn.functional.pad(
+            tokens1,
+            pad=(0, max_token_len - tokens1.shape[-1]),
             mode="constant",
-            value=pad_token_id,  # type: ignore
+            value=pad_token_id,
         )
-
-        padded_tokens1, padded_tokens2 = map(pad_partial, [tokens1, tokens2])
+        padded_tokens2 = torch.nn.functional.pad(
+            tokens2,
+            pad=(0, max_token_len - tokens2.shape[-1]),
+            mode="constant",
+            value=pad_token_id,
+        )
 
         end_point = ActivationAddition(
             tokens=padded_tokens1, coeff=coeff, act_name=act_name
