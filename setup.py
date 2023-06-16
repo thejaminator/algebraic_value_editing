@@ -13,7 +13,7 @@ setup(
     install_requires=[
         (
             "transformer-lens @"
-            " git+https://github.com/neelnanda-io/TransformerLens@9e034eef796ed32b0e473ca9f3c9d31e5d5046e7"
+            " git+https://github.com/neelnanda-io/TransformerLens@c566ecdf5baf1fdddcaa39014af2c672eaa65653"
         ),
         "torch==1.13.1",
         "numpy>=1.22.1",
